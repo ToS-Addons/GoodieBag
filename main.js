@@ -1,6 +1,7 @@
 'use strict';
 
-const electron = require('electron');
+const electron = require('electron'),
+    childProcess = require('child_process');
 
 const app = electron.app,
   BrowserWindow = electron.BrowserWindow,
@@ -16,7 +17,7 @@ function createMainWindow () {
     height: 768,
     title: 'GoodieBag Alpha',
     resizable: true,
-    'auto-hide-menu-bar': true
+    autoHideMenuBar: true
   });
 
   mainWindow.on('closed', function() {
@@ -43,7 +44,7 @@ function createMenu (devTools) {
           {
             label: '&Reload',
             accelerator: 'F5',
-            click: function() { mainWindow.reloadIgnoringCache(); }
+            click: function() { mainWindow.webContents.reloadIgnoringCache(); }
           }
         ]
       },
@@ -147,7 +148,7 @@ function createMenu (devTools) {
           {
             label: 'Reload',
             accelerator: 'Command+R',
-            click: function() { mainWindow.reloadIgnoringCache(); }
+            click: function() { mainWindow.webContents.reloadIgnoringCache(); }
           }
         ]
       }
@@ -166,15 +167,35 @@ function createMenu (devTools) {
   }
 }
 
-app.on('window-all-closed', function() {
+app.on('window-all-closed', () => {
   if (app.listeners('window-all-closed').length == 1)
     app.quit();
 });
 
 app.on('ready', function() {
-  createMainWindow(true);
-  createMenu();
+  createMainWindow();
+  createMenu(true);
 
-  //mainWindow.loadUrl('file://' + __dirname + '/index.html?' + vsn);
+  if (/[\\/]electron-prebuilt[\\/]/.test(process.execPath)) {
+    console.log('GoodieBag started in development mode. Running ember server...');
+    let emberServer = childProcess.exec("ember server -p 5000", (error, stdout, stderr) => {
+      console.log(error);
+    });
+    emberServer.stdout.on('data', (data) => {
+      console.log(data);
+      if (/^Serving on/.test(data)) {
+        mainWindow.loadURL('http://localhost:5000/');
+      }
+    });
+    emberServer.stderr.on('data', (data) => {
+      console.log(data);
+    });
+    app.on('quit', () => {
+      emberServer.kill();
+    });
+  }
+  else {
+    mainWindow.loadURL('file://' + __dirname + '/dist/index.html');
+  }
   mainWindow.focus();
 });
