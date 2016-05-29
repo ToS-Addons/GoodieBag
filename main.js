@@ -1,11 +1,14 @@
+/* jshint node: true */
 'use strict';
 
-const electron = require('electron');
+const electron = require('electron'),
+    fs = require('fs'),
+    path = require('path');
 
 const app = electron.app,
   BrowserWindow = electron.BrowserWindow,
-  Menu = electron.Menu,
-  MenuItem = electron.MenuItem;
+  Menu = electron.Menu/*,
+  MenuItem = electron.MenuItem*/;
 
 let mainWindow,
   menu;
@@ -16,6 +19,7 @@ function createMainWindow () {
     height: 768,
     title: 'GoodieBag Alpha',
     resizable: true,
+    nodeIntegration: false,
     'auto-hide-menu-bar': true
   });
 
@@ -25,7 +29,7 @@ function createMainWindow () {
 }
 
 function createMenu (devTools) {
-  if (process.platform != 'darwin') {
+  if (process.platform !== 'darwin') {
     let template = [
       {
         label: '&File',
@@ -43,7 +47,7 @@ function createMenu (devTools) {
           {
             label: '&Reload',
             accelerator: 'F5',
-            click: function() { mainWindow.reloadIgnoringCache(); }
+            click: function() { mainWindow.webContents.reloadIgnoringCache(); }
           }
         ]
       },
@@ -147,7 +151,7 @@ function createMenu (devTools) {
           {
             label: 'Reload',
             accelerator: 'Command+R',
-            click: function() { mainWindow.reloadIgnoringCache(); }
+            click: function() { mainWindow.webContents.reloadIgnoringCache(); }
           }
         ]
       }
@@ -167,14 +171,21 @@ function createMenu (devTools) {
 }
 
 app.on('window-all-closed', function() {
-  if (app.listeners('window-all-closed').length == 1)
+  if (app.listeners('window-all-closed').length === 1) {
     app.quit();
+  }
 });
 
 app.on('ready', function() {
   createMainWindow(true);
-  createMenu();
+  createMenu(true);
 
-  //mainWindow.loadUrl('file://' + __dirname + '/index.html?' + vsn);
+  try {
+    fs.accessSync(path.join(__dirname, 'dist'));
+    mainWindow.loadURL('file://' + __dirname + '/dist/index.html');
+  }
+  catch (e) {
+    mainWindow.loadURL('file://' + __dirname + '/index.html');
+  }
   mainWindow.focus();
 });

@@ -2,10 +2,9 @@
 
 module.exports = function(environment) {
   var ENV = {
-    modulePrefix: 'goodie-bag',
+    modulePrefix: 'goodiebag',
     environment: environment,
-    baseURL: '/',
-    locationType: 'auto',
+    locationType: 'hash',
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
