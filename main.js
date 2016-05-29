@@ -20,7 +20,7 @@ function createMainWindow () {
     title: 'GoodieBag Alpha',
     resizable: true,
     nodeIntegration: false,
-    'auto-hide-menu-bar': true
+    autoHideMenuBar: true
   });
 
   mainWindow.on('closed', function() {
@@ -170,14 +170,14 @@ function createMenu (devTools) {
   }
 }
 
-app.on('window-all-closed', function() {
+app.on('window-all-closed', () => {
   if (app.listeners('window-all-closed').length === 1) {
     app.quit();
   }
 });
 
 app.on('ready', function() {
-  createMainWindow(true);
+  createMainWindow();
   createMenu(true);
 
   try {

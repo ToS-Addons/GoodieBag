@@ -6,7 +6,8 @@
   "scripts": {
     "start": "electron main.js",
     "build": "ember build",
-    "test": "ember test"
+    "test": "ember test",
+    "bower": "bower install"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "ember-data": "^2.5.0",
     "ember-export-application-global": "^1.0.5",
     "ember-load-initializers": "^0.5.1",
+    "ember-pouch": "3.2.0",
     "ember-resolver": "^2.0.3",
     "loader.js": "^4.0.1"
   }
