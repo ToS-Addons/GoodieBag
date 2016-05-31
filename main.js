@@ -17,13 +17,15 @@ function createMainWindow () {
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 768,
+    minWidth: 800,
+    minHeight: 600,
     title: 'GoodieBag Alpha',
     resizable: true,
     nodeIntegration: false,
     autoHideMenuBar: true
   });
 
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', () => {
     mainWindow = null;
   });
 }
@@ -67,10 +69,10 @@ function createMenu (devTools) {
   else {
     var template = [
       {
-        label: 'GoodieBag',
+        label: 'GoodieBag Alpha',
         submenu: [
           {
-            label: 'About GoodieBag',
+            label: 'About GoodieBag Alpha',
             selector: 'orderFrontStandardAboutPanel:'
           },
           {
@@ -84,7 +86,7 @@ function createMenu (devTools) {
             type: 'separator'
           },
           {
-            label: 'Hide GoodieBag',
+            label: 'Hide GoodieBag Alpha',
             accelerator: 'Command+H',
             selector: 'hide:'
           },
@@ -171,12 +173,10 @@ function createMenu (devTools) {
 }
 
 app.on('window-all-closed', () => {
-  if (app.listeners('window-all-closed').length === 1) {
-    app.quit();
-  }
+  app.quit();
 });
 
-app.on('ready', function() {
+app.on('ready', () => {
   createMainWindow();
   createMenu(true);
 
